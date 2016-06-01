@@ -9,15 +9,19 @@
 import SpriteKit
 
 class GameScene: SKScene {
+    
+    var freePlay: SKSpriteNode?
+    var storyPlay: SKSpriteNode?
+    var savedStories: SKSpriteNode?
+    var transition: SKTransition?
+    
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        backgroundColor = SKColor.greenColor()
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Make-A-Story"
-        myLabel.fontSize = 45
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
-        
-        self.addChild(myLabel)
+        let thisScene = GameScene(size: scene!.size)
+        freePlay = childNodeWithName("freePlay") as? SKSpriteNode
+        storyPlay = childNodeWithName("storyPlay") as? SKSpriteNode
+        savedStories = childNodeWithName("savedStories") as? SKSpriteNode
+        thisScene.scaleMode = .AspectFill
     }
     
    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -26,21 +30,32 @@ class GameScene: SKScene {
         for touch in touches {
             let location = touch.locationInNode(self)
             
-            if location == sprite.freePlay {
-                
+            let nodes = self.nodesAtPoint(location) as [SKNode]
+            
+            for node in nodes {
+                if node.name == "freePlay" {
+                    transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
+                    
+                    let nextScene = StoryScene(size: scene!.size)
+                    nextScene.scaleMode = .AspectFill
+                    
+                    scene?.view?.presentScene(nextScene, transition: transition!)
+                } else if node.name == "storyPlay" {
+                    transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
+                    
+                    let nextScene = StoryScene(size: scene!.size)
+                    nextScene.scaleMode = .AspectFill
+                    
+                    scene?.view?.presentScene(nextScene, transition: transition!)
+                } else if node.name == "savedStories" {
+                    transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
+                    
+                    let nextScene = StoryScene(size: scene!.size)
+                    nextScene.scaleMode = .AspectFill
+                    
+                    scene?.view?.presentScene(nextScene, transition: transition!)
+                }
             }
-            
-            /*let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))*/
-            
-            self.addChild(sprite)
         }
     }
    

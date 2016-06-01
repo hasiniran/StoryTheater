@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "LandingPage.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "LandingPage.png",
       "scale" : "2x"
     },
     {

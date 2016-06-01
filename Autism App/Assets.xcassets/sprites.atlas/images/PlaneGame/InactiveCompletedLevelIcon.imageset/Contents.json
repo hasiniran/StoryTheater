@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "InactiveCompletedLevelIcon.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "InactiveCompletedLevelIcon.png",
       "scale" : "2x"
     },
     {

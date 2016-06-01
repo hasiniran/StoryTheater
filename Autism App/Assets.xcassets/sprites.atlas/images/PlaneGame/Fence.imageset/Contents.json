@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Fence.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "Fence.png",
       "scale" : "2x"
     },
     {
