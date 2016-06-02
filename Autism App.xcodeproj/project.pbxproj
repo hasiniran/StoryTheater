@@ -16,6 +16,10 @@
 		41714E4F1CF4F2510045BE7D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 41714E4D1CF4F2510045BE7D /* LaunchScreen.storyboard */; };
 		41E7B3171CFF5B59009CE7B8 /* StoryScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 41E7B3161CFF5B59009CE7B8 /* StoryScene.sks */; };
 		41E7B3191CFF6C0D009CE7B8 /* StoryScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E7B3181CFF6C0D009CE7B8 /* StoryScene.swift */; };
+		41E7B31B1D008D28009CE7B8 /* SavedScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 41E7B31A1D008D28009CE7B8 /* SavedScene.sks */; };
+		41E7B31D1D008D40009CE7B8 /* SavedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E7B31C1D008D40009CE7B8 /* SavedScene.swift */; };
+		41E7B31F1D008D7F009CE7B8 /* FreeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */; };
+		41E7B3211D008D98009CE7B8 /* FreeScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 41E7B3201D008D98009CE7B8 /* FreeScene.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +34,10 @@
 		41714E501CF4F2510045BE7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		41E7B3161CFF5B59009CE7B8 /* StoryScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = StoryScene.sks; sourceTree = "<group>"; };
 		41E7B3181CFF6C0D009CE7B8 /* StoryScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryScene.swift; sourceTree = "<group>"; };
+		41E7B31A1D008D28009CE7B8 /* SavedScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SavedScene.sks; sourceTree = "<group>"; };
+		41E7B31C1D008D40009CE7B8 /* SavedScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedScene.swift; sourceTree = "<group>"; };
+		41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreeScene.swift; sourceTree = "<group>"; };
+		41E7B3201D008D98009CE7B8 /* FreeScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = FreeScene.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,12 +70,16 @@
 		41714E3F1CF4F2510045BE7D /* Autism App */ = {
 			isa = PBXGroup;
 			children = (
-				41714E401CF4F2510045BE7D /* AppDelegate.swift */,
-				41E7B3161CFF5B59009CE7B8 /* StoryScene.sks */,
-				41714E421CF4F2510045BE7D /* GameScene.sks */,
 				41714E441CF4F2510045BE7D /* GameScene.swift */,
+				41714E421CF4F2510045BE7D /* GameScene.sks */,
 				41E7B3181CFF6C0D009CE7B8 /* StoryScene.swift */,
+				41E7B3161CFF5B59009CE7B8 /* StoryScene.sks */,
+				41E7B31C1D008D40009CE7B8 /* SavedScene.swift */,
+				41E7B31A1D008D28009CE7B8 /* SavedScene.sks */,
+				41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */,
+				41E7B3201D008D98009CE7B8 /* FreeScene.sks */,
 				41714E461CF4F2510045BE7D /* GameViewController.swift */,
+				41714E401CF4F2510045BE7D /* AppDelegate.swift */,
 				41714E481CF4F2510045BE7D /* Main.storyboard */,
 				41714E4B1CF4F2510045BE7D /* Assets.xcassets */,
 				41714E4D1CF4F2510045BE7D /* LaunchScreen.storyboard */,
@@ -134,7 +146,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41E7B31B1D008D28009CE7B8 /* SavedScene.sks in Resources */,
 				41714E431CF4F2510045BE7D /* GameScene.sks in Resources */,
+				41E7B3211D008D98009CE7B8 /* FreeScene.sks in Resources */,
 				41714E4F1CF4F2510045BE7D /* LaunchScreen.storyboard in Resources */,
 				41714E4C1CF4F2510045BE7D /* Assets.xcassets in Resources */,
 				41E7B3171CFF5B59009CE7B8 /* StoryScene.sks in Resources */,
@@ -149,7 +163,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41E7B31D1D008D40009CE7B8 /* SavedScene.swift in Sources */,
 				41714E451CF4F2510045BE7D /* GameScene.swift in Sources */,
+				41E7B31F1D008D7F009CE7B8 /* FreeScene.swift in Sources */,
 				41714E471CF4F2510045BE7D /* GameViewController.swift in Sources */,
 				41E7B3191CFF6C0D009CE7B8 /* StoryScene.swift in Sources */,
 				41714E411CF4F2510045BE7D /* AppDelegate.swift in Sources */,

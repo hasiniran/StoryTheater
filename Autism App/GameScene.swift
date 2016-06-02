@@ -21,7 +21,7 @@ class GameScene: SKScene {
         freePlay = childNodeWithName("freePlay") as? SKSpriteNode
         storyPlay = childNodeWithName("storyPlay") as? SKSpriteNode
         savedStories = childNodeWithName("savedStories") as? SKSpriteNode
-
+        //scene!.scaleMode = SKSceneScaleMode.ResizeFill
     }
     
    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -43,14 +43,14 @@ class GameScene: SKScene {
                 } else if node.name == "storyPlay" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = StoryScene(size: scene!.size)
+                    let nextScene = SavedScene(size: scene!.size)
                     nextScene.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene, transition: transition!)
                 } else if node.name == "savedStories" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = StoryScene(size: scene!.size)
+                    let nextScene = FreeScene(size: scene!.size)
                     nextScene.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene, transition: transition!)

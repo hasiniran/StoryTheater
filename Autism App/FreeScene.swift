@@ -1,16 +1,16 @@
 //
-//  StoryScene.swift
+//  FreeScene.swift
 //  Autism App
 //
-//  Created by Henry Long on 6/1/16.
+//  Created by Henry Long on 6/2/16.
 //  Copyright © 2016 Mobile Computing Lab. All rights reserved.
 //
 
 import UIKit
 import SpriteKit
 
-class StoryScene: SKScene {
-    
+class FreeScene: SKScene {
+
     var transition: SKTransition?
     
     override func didMoveToView(view: SKView) {
@@ -18,7 +18,7 @@ class StoryScene: SKScene {
         
         //scene!.scaleMode = SKSceneScaleMode.ResizeFill
     }
-
+    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         
@@ -43,5 +43,5 @@ class StoryScene: SKScene {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
-
+    
 }
