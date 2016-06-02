@@ -17,11 +17,11 @@ class GameScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
-        let thisScene = GameScene(size: scene!.size)
+        
         freePlay = childNodeWithName("freePlay") as? SKSpriteNode
         storyPlay = childNodeWithName("storyPlay") as? SKSpriteNode
         savedStories = childNodeWithName("savedStories") as? SKSpriteNode
-        thisScene.scaleMode = .AspectFill
+
     }
     
    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
