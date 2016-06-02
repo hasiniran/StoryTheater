@@ -16,7 +16,7 @@ class FreeScene: SKScene {
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
-        //scene!.scaleMode = SKSceneScaleMode.ResizeFill
+        scene!.scaleMode = SKSceneScaleMode.ResizeFill
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -31,10 +31,10 @@ class FreeScene: SKScene {
                 if node.name == "backArrow" {
                     transition = SKTransition.revealWithDirection(.Up, duration: 1.0)
                     
-                    let nextScene = GameScene(size: scene!.size)
-                    nextScene.scaleMode = .AspectFill
+                    let nextScene = GameScene(fileNamed: "GameScene")
+                    nextScene!.scaleMode = .AspectFill
                     
-                    scene?.view?.presentScene(nextScene, transition: transition!)
+                    scene?.view?.presentScene(nextScene!, transition: transition!)
                 }
             }
         }
