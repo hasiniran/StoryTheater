@@ -8,6 +8,7 @@
 
 import UIKit
 import SpriteKit
+import AVFoundation
 
 class FreeScene: SKScene {
 
@@ -35,6 +36,9 @@ class FreeScene: SKScene {
                     nextScene!.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene!, transition: transition!)
+                } else if node.name == "background" {
+                    //start recording (experiment)
+                    
                 }
             }
         }

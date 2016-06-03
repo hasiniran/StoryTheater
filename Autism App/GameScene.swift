@@ -36,21 +36,21 @@ class GameScene: SKScene {
                 if node.name == "freePlay" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = StoryScene(fileNamed: "StoryScene")
+                    let nextScene = FreeScene(fileNamed: "FreeScene")
                     nextScene!.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene!, transition: transition!)
                 } else if node.name == "storyPlay" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = SavedScene(fileNamed: "SavedScene")
+                    let nextScene = StoryScene(fileNamed: "StoryScene")
                     nextScene!.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene!, transition: transition!)
                 } else if node.name == "savedStories" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = FreeScene(fileNamed: "FreeScene")
+                    let nextScene = SavedScene(fileNamed: "SavedScene")
                     nextScene!.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene!, transition: transition!)
