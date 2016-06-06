@@ -10,11 +10,13 @@ import UIKit
 import SpriteKit
 import AVFoundation
 
-class FreeScene: SKScene, AVAudioRecorderDelegate{
+class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
 
     var transition: SKTransition?
     var recordingSession: AVAudioSession!
     var recorder: AVAudioRecorder!
+    var player: AVAudioPlayer!
+    var filename: String?
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -61,6 +63,8 @@ class FreeScene: SKScene, AVAudioRecorderDelegate{
                                 //failed to record
                         print("failed to record")
                     }
+                } else if node.name == "playbackButton" {
+                    self.playRecording()
                 }
             }
         }
@@ -77,6 +81,19 @@ class FreeScene: SKScene, AVAudioRecorderDelegate{
         return documentsDirectory
     }
     
+    func getCacheDirectory() -> NSString {
+        let paths = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true) as [String]
+        let directory = paths[0]
+        print(directory)
+        return directory
+    }
+    
+    func getFileURL() -> NSURL {
+        //let path = getDocumentsDirectory().stringByAppendingPathComponent(filename!)
+        let path = getDocumentsDirectory().stringByAppendingPathComponent("recording.m4a")
+        let filepath = NSURL(fileURLWithPath: path)
+        return filepath
+    }
     
     func startRecording() {
         let audioFilename = getDocumentsDirectory().stringByAppendingPathComponent("recording.m4a")
@@ -118,6 +135,31 @@ class FreeScene: SKScene, AVAudioRecorderDelegate{
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         if !flag {
             finishRecording(success: false)
+        }
+    }
+    
+    func playRecording() {
+        //var error: NSError?
+        do{
+            player = try AVAudioPlayer(contentsOfURL: getFileURL())
+            player.delegate=self
+            player.play()
+            print("playing audio...")
+        } catch {
+            print("AVAudioPlayer error")
+        }
+    }
+    
+    func stopPlaying() {
+        player.stop()
+        print("playback stopped")
+    }
+    
+    func playbackTapped() {
+        if player == nil {
+            playRecording()
+        } else {
+            stopPlaying()
         }
     }
 }
