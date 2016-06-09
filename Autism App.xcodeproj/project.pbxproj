@@ -22,6 +22,44 @@
 		41E7B3211D008D98009CE7B8 /* FreeScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 41E7B3201D008D98009CE7B8 /* FreeScene.sks */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		82E5CA761D09C54100ECB09F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 047C40AB1C1A294700D6B267;
+			remoteInfo = ScreenCapture;
+		};
+		82E5CA781D09C54100ECB09F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 047C40CB1C1A2AFA00D6B267;
+			remoteInfo = Example;
+		};
+		82E5CA7A1D09C54100ECB09F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 82E5CA3A1D090C0100ECB09F;
+			remoteInfo = "Example iOS";
+		};
+		82E5CA7C1D09C54100ECB09F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 82E5CA4F1D090C0100ECB09F;
+			remoteInfo = "Example iOSTests";
+		};
+		82E5CA7E1D09C54100ECB09F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 82E5CA5A1D090C0100ECB09F;
+			remoteInfo = "Example iOSUITests";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		41714E3D1CF4F2510045BE7D /* Autism App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Autism App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		41714E401CF4F2510045BE7D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -38,6 +76,7 @@
 		41E7B31C1D008D40009CE7B8 /* SavedScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedScene.swift; sourceTree = "<group>"; };
 		41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreeScene.swift; sourceTree = "<group>"; };
 		41E7B3201D008D98009CE7B8 /* FreeScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = FreeScene.sks; sourceTree = "<group>"; };
+		82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ScreenCapture.xcodeproj; path = "../ScreenRecSample/swift-screencapture/ScreenCapture.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +93,7 @@
 		41714E341CF4F2510045BE7D = {
 			isa = PBXGroup;
 			children = (
+				82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */,
 				41714E3F1CF4F2510045BE7D /* Autism App */,
 				41714E3E1CF4F2510045BE7D /* Products */,
 			);
@@ -86,6 +126,18 @@
 				41714E501CF4F2510045BE7D /* Info.plist */,
 			);
 			path = "Autism App";
+			sourceTree = "<group>";
+		};
+		82E5CA6F1D09C54100ECB09F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				82E5CA771D09C54100ECB09F /* ScreenCapture.framework */,
+				82E5CA791D09C54100ECB09F /* Example.app */,
+				82E5CA7B1D09C54100ECB09F /* Example iOS.app */,
+				82E5CA7D1D09C54100ECB09F /* Example iOSTests.xctest */,
+				82E5CA7F1D09C54100ECB09F /* Example iOSUITests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,12 +186,56 @@
 			mainGroup = 41714E341CF4F2510045BE7D;
 			productRefGroup = 41714E3E1CF4F2510045BE7D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 82E5CA6F1D09C54100ECB09F /* Products */;
+					ProjectRef = 82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				41714E3C1CF4F2510045BE7D /* Autism App */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		82E5CA771D09C54100ECB09F /* ScreenCapture.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ScreenCapture.framework;
+			remoteRef = 82E5CA761D09C54100ECB09F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		82E5CA791D09C54100ECB09F /* Example.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = Example.app;
+			remoteRef = 82E5CA781D09C54100ECB09F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		82E5CA7B1D09C54100ECB09F /* Example iOS.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Example iOS.app";
+			remoteRef = 82E5CA7A1D09C54100ECB09F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		82E5CA7D1D09C54100ECB09F /* Example iOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Example iOSTests.xctest";
+			remoteRef = 82E5CA7C1D09C54100ECB09F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		82E5CA7F1D09C54100ECB09F /* Example iOSUITests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Example iOSUITests.xctest";
+			remoteRef = 82E5CA7E1D09C54100ECB09F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		41714E3B1CF4F2510045BE7D /* Resources */ = {
@@ -283,6 +379,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Autism App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.notredame.Autism-App";
@@ -295,6 +392,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Autism App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.notredame.Autism-App";

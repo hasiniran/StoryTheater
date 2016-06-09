@@ -8,20 +8,33 @@
 
 import UIKit
 import SpriteKit
+import Foundation
 import AVFoundation
+import ReplayKit
+//import ScreenCapture
 
-class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
+class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPreviewViewControllerDelegate/*, AVCaptureFileOutputRecordingDelegate*/ {
 
+    var viewController: UIViewController!
     var transition: SKTransition?
     var recordingSession: AVAudioSession!
     var recorder: AVAudioRecorder!
     var player: AVAudioPlayer!
+    var videoRecorder: RPScreenRecorder!
     var filename: String?
+    var videoSession: AVCaptureSession?
+    //var screen: AVCaptureScreenInput?
+    var moviefile: AVCaptureMovieFileOutput?
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
         scene!.scaleMode = SKSceneScaleMode.ResizeFill
+        viewController=self.view?.window?.rootViewController
+        srand48(Int(NSDate().timeIntervalSinceReferenceDate))
+        //var color: UIColor = UIColor.whiteColor()
+        //print(AVCaptureDevice.devices())
+        //NSLog("Devices: "+String(AVCaptureDevice.devices()))
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -63,8 +76,30 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
                                 //failed to record
                         print("failed to record")
                     }
+                    //Needs to refer to textnode, not button node
+                    /*if let button = node as? SKShapeNode {
+                        if button.fillColor == UIColor.whiteColor(){
+                            button.fillColor=UIColor.grayColor()
+                        } else if button.fillColor == UIColor.grayColor() {
+                            button.fillColor=UIColor.whiteColor()
+                        }
+                    }*/
                 } else if node.name == "playbackButton" {
                     self.playRecording()
+                } else if node.name == "videoRecButton" {
+                    self.videoRecTapped()
+                } else if node.name == "background" {
+                    if let bg = node as? SKSpriteNode {
+                        bg.color=UIColor.init(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: CGFloat(drand48()))
+                    }
+                }
+                if let button = node as? SKShapeNode {
+                    if button.fillColor == UIColor.whiteColor(){
+                        print("change color")
+                        button.fillColor=UIColor.grayColor()
+                    } else if button.fillColor == UIColor.grayColor() {
+                        button.fillColor=UIColor.whiteColor()
+                    }
                 }
             }
         }
@@ -88,16 +123,17 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
         return directory
     }
     
-    func getFileURL() -> NSURL {
+    func getFileURL(ext: String) -> NSURL {
         //let path = getDocumentsDirectory().stringByAppendingPathComponent(filename!)
-        let path = getDocumentsDirectory().stringByAppendingPathComponent("recording.m4a")
+        let path = getDocumentsDirectory().stringByAppendingPathComponent(ext)
         let filepath = NSURL(fileURLWithPath: path)
         return filepath
     }
     
     func startRecording() {
-        let audioFilename = getDocumentsDirectory().stringByAppendingPathComponent("recording.m4a")
-        let audioURL = NSURL(fileURLWithPath: audioFilename)
+        //let audioFilename = getDocumentsDirectory().stringByAppendingPathComponent("recording.m4a")
+        //let audioURL = NSURL(fileURLWithPath: audioFilename)
+        let audioURL = getFileURL("recording.m4a")
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000.0,
@@ -141,7 +177,7 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
     func playRecording() {
         //var error: NSError?
         do{
-            player = try AVAudioPlayer(contentsOfURL: getFileURL())
+            player = try AVAudioPlayer(contentsOfURL: getFileURL("recording.m4a"))
             player.delegate=self
             player.play()
             print("playing audio...")
@@ -153,6 +189,7 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
     func stopPlaying() {
         player.stop()
         print("playback stopped")
+        player = nil
     }
     
     func playbackTapped() {
@@ -162,4 +199,76 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate{
             stopPlaying()
         }
     }
+    
+    func startVideo() {
+        //videoSession=AVCaptureSession()
+        //moviefile=AVCaptureMovieFileOutput()
+        //var outpath=getFileURL("capture.mp4")
+        //var screenInput=AVCaptureInput()
+        
+        /*if RPScreenRecorder.sharedRecorder().available{
+            videoRecorder = RPScreenRecorder.sharedRecorder()
+            videoRecorder.startRecordingWithMicrophoneEnabled(true){ (error) in
+                if let err = error {
+                    print(err.localizedDescription)
+                } else {
+                    print("recording video")
+                    //change label to indicate recording in progress
+                }
+            }
+        } else {
+            print("error: video recording not available")
+        }*/
+        NSLog("start video")
+        videoRecorder = RPScreenRecorder.sharedRecorder()
+        videoRecorder.startRecordingWithMicrophoneEnabled(true) { (error) in
+            if let unwrappedError = error {
+                print(unwrappedError.localizedDescription)
+            }
+        }
+    }
+    
+    func stopVideo() {
+        videoRecorder = RPScreenRecorder.sharedRecorder()
+        NSLog("stopping video")
+        videoRecorder.stopRecordingWithHandler{ [unowned self] (preview, error) in
+            if let unwrappedPreview = preview {
+                unwrappedPreview.previewControllerDelegate = self
+                self.viewController.presentViewController(unwrappedPreview, animated: true, completion: nil)
+            }
+        /*videoRecorder.stopRecordingWithHandler { (previewController: RPPreviewViewController?, error: NSError?) -> Void in
+            if error != nil{
+                print("error... or so mething")
+            }
+            if previewController != nil {
+                let alertController = UIAlertController(title: "Recording", message: "Discard or view recording?", preferredStyle: .Alert)
+                let discardAction = UIAlertAction(title: "Discard", style: .Default){ (action: UIAlertAction) in
+                    self.videoRecorder.discardRecordingWithHandler({() -> Void in
+                    })
+                }
+                let viewAction = UIAlertAction(title: "View", style: .Default, handler: { (action: UIAlertAction) -> Void in
+                    UIViewController().presentViewController(previewController!, animated: true, completion: nil)
+                })
+                alertController.addAction(discardAction)
+                alertController.addAction(viewAction)
+                UIViewController().presentViewController(alertController, animated: true, completion: nil)
+                
+            }*/
+        }
+        videoRecorder=nil
+    }
+    
+    func videoRecTapped() {
+        NSLog(String(videoRecorder))
+        if videoRecorder==nil{
+            startVideo()
+        } else {
+            stopVideo()
+        }
+    }
+    
+    //func previewControllerDidFinish(previewController: RPPreviewViewController) {
+    //    dismissViewControllerAnimated(true, completion: nil)
+    //}
+    
 }
