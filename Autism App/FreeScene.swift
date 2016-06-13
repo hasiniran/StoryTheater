@@ -15,16 +15,17 @@ import ReplayKit
 
 class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPreviewViewControllerDelegate/*, AVCaptureFileOutputRecordingDelegate*/ {
 
-    var viewController: UIViewController!
+    weak var viewController: UIViewController!
     var transition: SKTransition?
     var recordingSession: AVAudioSession!
     var recorder: AVAudioRecorder!
     var player: AVAudioPlayer!
     var videoRecorder: RPScreenRecorder!
     var filename: String?
-    var videoSession: AVCaptureSession?
+    //var videoSession: AVCaptureSession?
     //var screen: AVCaptureScreenInput?
-    var moviefile: AVCaptureMovieFileOutput?
+    //var moviefile: AVCaptureMovieFileOutput?
+    var images: [UIImage]?
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -35,6 +36,8 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         //var color: UIColor = UIColor.whiteColor()
         //print(AVCaptureDevice.devices())
         //NSLog("Devices: "+String(AVCaptureDevice.devices()))
+        print(self.children)
+        images=[UIImage]()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -64,7 +67,12 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                         try recordingSession.setActive(true)
                         recordingSession.requestRecordPermission() { [unowned self] (allowed: Bool) -> Void in dispatch_async(dispatch_get_main_queue()){
                             if allowed {
-                                self.recordTapped()
+                                let label = node.childNodeWithName("recordText") as? SKLabelNode
+                                if self.recordTapped(){
+                                    label!.text="Stop Recording"
+                                } else {
+                                    label!.text="Record!"
+                                }
                                 //print("starting recording...")
                             } else {
                                 //failed to record
@@ -76,18 +84,18 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                                 //failed to record
                         print("failed to record")
                     }
-                    //Needs to refer to textnode, not button node
-                    /*if let button = node as? SKShapeNode {
-                        if button.fillColor == UIColor.whiteColor(){
-                            button.fillColor=UIColor.grayColor()
-                        } else if button.fillColor == UIColor.grayColor() {
-                            button.fillColor=UIColor.whiteColor()
-                        }
-                    }*/
+
                 } else if node.name == "playbackButton" {
                     self.playRecording()
                 } else if node.name == "videoRecButton" {
-                    self.videoRecTapped()
+                    let label = node.childNodeWithName("videoRecText") as? SKLabelNode
+                    if self.videoRecTapped() {
+                        label!.text="Recording..."
+                    } else {
+                        label!.text="Rec Video"
+                    }
+                } else if node.name == "videoPlayButton" {
+                    self.build(outputSize: CGSizeMake(1280, 720))
                 } else if node.name == "background" {
                     if let bg = node as? SKSpriteNode {
                         bg.color=UIColor.init(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: CGFloat(drand48()))
@@ -160,11 +168,13 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         }
     }
     
-    func recordTapped() {
+    func recordTapped() -> Bool{
         if recorder == nil {
             startRecording()
+            return true
         } else {
             finishRecording(success: true)
+            return false
         }
     }
     
@@ -206,7 +216,8 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         //var outpath=getFileURL("capture.mp4")
         //var screenInput=AVCaptureInput()
         
-        /*if RPScreenRecorder.sharedRecorder().available{
+        /* ReplayKit recording
+        if RPScreenRecorder.sharedRecorder().available{
             videoRecorder = RPScreenRecorder.sharedRecorder()
             videoRecorder.startRecordingWithMicrophoneEnabled(true){ (error) in
                 if let err = error {
@@ -219,13 +230,40 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         } else {
             print("error: video recording not available")
         }*/
-        NSLog("start video")
+        //NSLog("start video")
+        
+        let image: UIImage=getScreenshot(self)
+        images!.append(image)
+        print(images!.count)
+        let imgSprite=self.childNodeWithName("balloon") as? SKSpriteNode
+        //let recordFrame=self.scene?.childNodeWithName("recordFrame") as? SKShapeNode
+        //let jpeg=UIImageJPEGRepresentation(image, 20)
+        //let url=getFileURL("screenshot.jpg")
+        //jpeg?.writeToURL(url, atomically: true)
+        
+        imgSprite!.texture=SKTexture(image: image)
+        
         videoRecorder = RPScreenRecorder.sharedRecorder()
         videoRecorder.startRecordingWithMicrophoneEnabled(true) { (error) in
             if let unwrappedError = error {
                 print(unwrappedError.localizedDescription)
             }
         }
+    }
+    
+    func getScreenshot(scene: SKScene) -> UIImage {
+        let snapshotView = scene.view!.snapshotViewAfterScreenUpdates(true)
+        let bounds = UIScreen.mainScreen().bounds
+        
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
+        
+        snapshotView.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
+        
+        let screenshotImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        
+        return screenshotImage;
     }
     
     func stopVideo() {
@@ -256,19 +294,149 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
             }*/
         }
         videoRecorder=nil
+        /*do{
+            let videoWriter=try AVAssetWriter(URL: getFileURL("video.m4v"), fileType: AVFileTypeAppleM4V)
+            let videoSettings = [
+                AVVideoCodecKey: AVVideoCodecH264,
+                AVVideoWidthKey: 640,
+                AVVideoHeightKey: 480
+            ]
+            var outputSize=CGSizeMake(1280, 720)
+            let writerInput=AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: videoSettings as? [String : AnyObject])
+            let sourcePixelBufferAttributesDictionary = [kCVPixelBufferPixelFormatTypeKey as String : NSNumber(unsignedInt: kCVPixelFormatType_32ARGB), kCVPixelBufferWidthKey as String: NSNumber(float: Float(outputSize.width)), kCVPixelBufferHeightKey as String: NSNumber(float: Float(outputSize.height))]
+            let pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: sourcePixelBufferAttributesDictionary)
+            
+            if videoWriter.canAddInput(writerInput) {
+                videoWriter.addInput(writerInput)
+            }
+            
+            videoWriter.startWriting()
+            videoWriter.startSessionAtSourceTime(kCMTimeZero)
+            var ciimage=CIImage(image: images![0])
+            CIContext().createCGImage(ciimage!,fromRect: ciimage!.extent)
+            //var cg:CGImage = CGImage(images![0])
+            writerInput.appendSampleBuffer(<#T##sampleBuffer: CMSampleBuffer##CMSampleBuffer#>)
+        } catch {
+            print("error: cannot create AVAssetWriter")
+        }*/
     }
     
-    func videoRecTapped() {
+    func videoRecTapped() -> Bool{
         NSLog(String(videoRecorder))
         if videoRecorder==nil{
             startVideo()
+            return true
         } else {
             stopVideo()
+            return false
         }
     }
     
-    //func previewControllerDidFinish(previewController: RPPreviewViewController) {
-    //    dismissViewControllerAnimated(true, completion: nil)
-    //}
+    func build(outputSize outputSize: CGSize) {
+        /*let fileManager = NSFileManager.defaultManager()
+        let urls = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        guard let documentDirectory: NSURL = urls.first else {
+            fatalError("documentDir Error")
+        }
+        
+        let videoOutputURL = documentDirectory.URLByAppendingPathComponent("OutputVideo.mp4")
+        */
+        let videoOutputURL=getFileURL("video.mp4")
+        
+        if NSFileManager.defaultManager().fileExistsAtPath(videoOutputURL.path!) {
+            do {
+                try NSFileManager.defaultManager().removeItemAtPath(videoOutputURL.path!)
+            } catch {
+                fatalError("Unable to delete file: \(error) : \(#function).")
+            }
+        }
+        
+        guard let videoWriter = try? AVAssetWriter(URL: videoOutputURL, fileType: AVFileTypeMPEG4) else {
+            fatalError("AVAssetWriter error")
+        }
+        
+        let outputSettings = [AVVideoCodecKey : AVVideoCodecH264, AVVideoWidthKey : NSNumber(float: Float(outputSize.width)), AVVideoHeightKey : NSNumber(float: Float(outputSize.height))]
+        
+        guard videoWriter.canApplyOutputSettings(outputSettings, forMediaType: AVMediaTypeVideo) else {
+            fatalError("Negative : Can't apply the Output settings...")
+        }
+        
+        let videoWriterInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo, outputSettings: outputSettings)
+        let sourcePixelBufferAttributesDictionary = [kCVPixelBufferPixelFormatTypeKey as String : NSNumber(unsignedInt: kCVPixelFormatType_32ARGB), kCVPixelBufferWidthKey as String: NSNumber(float: Float(outputSize.width)), kCVPixelBufferHeightKey as String: NSNumber(float: Float(outputSize.height))]
+        let pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: videoWriterInput, sourcePixelBufferAttributes: sourcePixelBufferAttributesDictionary)
+        
+        if videoWriter.canAddInput(videoWriterInput) {
+            videoWriter.addInput(videoWriterInput)
+        }
+        
+        if videoWriter.startWriting() {
+            videoWriter.startSessionAtSourceTime(kCMTimeZero)
+            assert(pixelBufferAdaptor.pixelBufferPool != nil)
+            
+            let media_queue = dispatch_queue_create("mediaInputQueue", nil)
+            
+            videoWriterInput.requestMediaDataWhenReadyOnQueue(media_queue, usingBlock: { () -> Void in
+                let fps: Int32 = 1
+                let frameDuration = CMTimeMake(1, fps)
+                
+                var frameCount: Int64 = 0
+                var appendSucceeded = true
+                
+                while (!self.images!.isEmpty) {
+                    if (videoWriterInput.readyForMoreMediaData) {
+                        let nextPhoto = self.images!.removeAtIndex(0)
+                        let lastFrameTime = CMTimeMake(frameCount, fps)
+                        let presentationTime = frameCount == 0 ? lastFrameTime : CMTimeAdd(lastFrameTime, frameDuration)
+                        
+                        var pixelBuffer: CVPixelBuffer? = nil
+                        let status: CVReturn = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pixelBufferAdaptor.pixelBufferPool!, &pixelBuffer)
+                        
+                        if let pixelBuffer = pixelBuffer where status == 0 {
+                            let managedPixelBuffer = pixelBuffer
+                            
+                            CVPixelBufferLockBaseAddress(managedPixelBuffer, 0)
+                            
+                            let data = CVPixelBufferGetBaseAddress(managedPixelBuffer)
+                            let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+                            let context = CGBitmapContextCreate(data, Int(outputSize.width), Int(outputSize.height), 8, CVPixelBufferGetBytesPerRow(managedPixelBuffer), rgbColorSpace, CGImageAlphaInfo.PremultipliedFirst.rawValue)
+                            
+                            CGContextClearRect(context, CGRectMake(0, 0, CGFloat(outputSize.width), CGFloat(outputSize.height)))
+                            
+                            let horizontalRatio = CGFloat(outputSize.width) / nextPhoto.size.width
+                            let verticalRatio = CGFloat(outputSize.height) / nextPhoto.size.height
+                            //aspectRatio = max(horizontalRatio, verticalRatio) // ScaleAspectFill
+                            let aspectRatio = min(horizontalRatio, verticalRatio) // ScaleAspectFit
+                            
+                            let newSize:CGSize = CGSizeMake(nextPhoto.size.width * aspectRatio, nextPhoto.size.height * aspectRatio)
+                            
+                            let x = newSize.width < outputSize.width ? (outputSize.width - newSize.width) / 2 : 0
+                            let y = newSize.height < outputSize.height ? (outputSize.height - newSize.height) / 2 : 0
+                            
+                            CGContextDrawImage(context, CGRectMake(x, y, newSize.width, newSize.height), nextPhoto.CGImage)
+                            
+                            CVPixelBufferUnlockBaseAddress(managedPixelBuffer, 0)
+                            
+                            appendSucceeded = pixelBufferAdaptor.appendPixelBuffer(pixelBuffer, withPresentationTime: presentationTime)
+                        } else {
+                            print("Failed to allocate pixel buffer")
+                            appendSucceeded = false
+                        }
+                    }
+                    if !appendSucceeded {
+                        break
+                    }
+                    frameCount++
+                }
+                videoWriterInput.markAsFinished()
+                videoWriter.finishWritingWithCompletionHandler { () -> Void in
+                    print("FINISHED!!!!!")
+                }
+            })
+        }
+    }
+    
+    func previewControllerDidFinish(previewController: RPPreviewViewController) {
+        self.viewController.dismissViewControllerAnimated(true, completion: nil)
+    }
     
 }
