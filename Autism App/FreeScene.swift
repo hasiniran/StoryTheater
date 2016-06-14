@@ -17,15 +17,18 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
 
     weak var viewController: UIViewController!
     var transition: SKTransition?
-    var recordingSession: AVAudioSession!
+    /*var recordingSession: AVAudioSession!
     var recorder: AVAudioRecorder!
     var player: AVAudioPlayer!
-    var videoRecorder: RPScreenRecorder!
+    var videoRecorder: RPScreenRecorder!*/
     var filename: String?
     //var videoSession: AVCaptureSession?
     //var screen: AVCaptureScreenInput?
     //var moviefile: AVCaptureMovieFileOutput?
     var images: [UIImage]?
+    
+    var recorder: Recorder!
+    
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -33,11 +36,8 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         scene!.scaleMode = SKSceneScaleMode.ResizeFill
         viewController=self.view?.window?.rootViewController
         srand48(Int(NSDate().timeIntervalSinceReferenceDate))
-        //var color: UIColor = UIColor.whiteColor()
-        //print(AVCaptureDevice.devices())
-        //NSLog("Devices: "+String(AVCaptureDevice.devices()))
-        print(self.children)
         images=[UIImage]()
+        recorder=Recorder()
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -60,6 +60,8 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                     //start recording (experiment)
                     //print("recordButton pressed")
                     //navigationITem.backBarButtonItem = UIBarButtonItem(title:"Record",style: .Plain, target:nil,action:nil)
+                    
+                    /*
                     recordingSession = AVAudioSession.sharedInstance()
                     
                     do {
@@ -83,10 +85,17 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                     } catch {
                                 //failed to record
                         print("failed to record")
+                    }*/
+                    
+                    let label=node.childNodeWithName("recordText") as? SKLabelNode
+                    if self.recordTapped(){
+                        label!.text="Stop Recording"
+                    } else {
+                        label!.text="Record!"
                     }
 
                 } else if node.name == "playbackButton" {
-                    self.playRecording()
+                    recorder.playRecording()
                 } else if node.name == "videoRecButton" {
                     let label = node.childNodeWithName("videoRecText") as? SKLabelNode
                     if self.videoRecTapped() {
@@ -95,7 +104,7 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                         label!.text="Rec Video"
                     }
                 } else if node.name == "videoPlayButton" {
-                    self.build(outputSize: CGSizeMake(1280, 720))
+                    recorder.build(outputSize: CGSizeMake(1280, 720))
                 } else if node.name == "background" {
                     if let bg = node as? SKSpriteNode {
                         bg.color=UIColor.init(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: CGFloat(drand48()))
@@ -116,7 +125,40 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
+    
+    func recordTapped() -> Bool{
+        if !recorder.isSoundRecording(){
+            recorder.startSoundRecording("recording.m4a")
+            return true
+        } else {
+            recorder.stopSoundRecording(success: true)
+            return false
+        }
+    }
 
+    func playbackTapped() {
+        recorder.playRecording()
+    }
+    
+    func videoRecTapped() -> Bool{
+        /*NSLog(String(videoRecorder))
+         if videoRecorder==nil{
+         startVideo()
+         return true
+         } else {
+         stopVideo()
+         return false
+         }*/
+        if !recorder.isVideoRecording(){
+            recorder.startVideo(self)
+            return true
+        } else {
+            recorder.stopVideo()
+            return false
+        }
+    }
+    
+    /*
     func getDocumentsDirectory() -> NSString {
         let paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true) as [String]
         let documentsDirectory = paths[0]
@@ -136,8 +178,8 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         let path = getDocumentsDirectory().stringByAppendingPathComponent(ext)
         let filepath = NSURL(fileURLWithPath: path)
         return filepath
-    }
-    
+    }*/
+    /*
     func startRecording() {
         //let audioFilename = getDocumentsDirectory().stringByAppendingPathComponent("recording.m4a")
         //let audioURL = NSURL(fileURLWithPath: audioFilename)
@@ -167,17 +209,9 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
             print("recording failed")
         }
     }
-    
-    func recordTapped() -> Bool{
-        if recorder == nil {
-            startRecording()
-            return true
-        } else {
-            finishRecording(success: true)
-            return false
-        }
-    }
-    
+    */
+
+    /*
     func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
         if !flag {
             finishRecording(success: false)
@@ -201,15 +235,9 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         print("playback stopped")
         player = nil
     }
-    
-    func playbackTapped() {
-        if player == nil {
-            playRecording()
-        } else {
-            stopPlaying()
-        }
-    }
-    
+    */
+
+    /*
     func startVideo() {
         //videoSession=AVCaptureSession()
         //moviefile=AVCaptureMovieFileOutput()
@@ -243,12 +271,12 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         
         imgSprite!.texture=SKTexture(image: image)
         
-        videoRecorder = RPScreenRecorder.sharedRecorder()
+        /*videoRecorder = RPScreenRecorder.sharedRecorder()
         videoRecorder.startRecordingWithMicrophoneEnabled(true) { (error) in
             if let unwrappedError = error {
                 print(unwrappedError.localizedDescription)
             }
-        }
+        }*/
     }
     
     func getScreenshot(scene: SKScene) -> UIImage {
@@ -256,7 +284,7 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         let bounds = UIScreen.mainScreen().bounds
         
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
-        
+        //calculate rectangle bounds based on percentage of screen size (account for different devices)
         snapshotView.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
         
         let screenshotImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -319,19 +347,10 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         } catch {
             print("error: cannot create AVAssetWriter")
         }*/
-    }
+    }*/
     
-    func videoRecTapped() -> Bool{
-        NSLog(String(videoRecorder))
-        if videoRecorder==nil{
-            startVideo()
-            return true
-        } else {
-            stopVideo()
-            return false
-        }
-    }
-    
+
+    /*
     func build(outputSize outputSize: CGSize) {
         /*let fileManager = NSFileManager.defaultManager()
         let urls = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
@@ -376,7 +395,7 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
             let media_queue = dispatch_queue_create("mediaInputQueue", nil)
             
             videoWriterInput.requestMediaDataWhenReadyOnQueue(media_queue, usingBlock: { () -> Void in
-                let fps: Int32 = 1
+                let fps: Int32 = 10
                 let frameDuration = CMTimeMake(1, fps)
                 
                 var frameCount: Int64 = 0
@@ -425,18 +444,19 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                     if !appendSucceeded {
                         break
                     }
-                    frameCount++
+                    frameCount+=1
                 }
                 videoWriterInput.markAsFinished()
                 videoWriter.finishWritingWithCompletionHandler { () -> Void in
                     print("FINISHED!!!!!")
                 }
             })
-        }
+        } //Needs to combine audio with video - AVComposition
+        
     }
     
     func previewControllerDidFinish(previewController: RPPreviewViewController) {
         self.viewController.dismissViewControllerAnimated(true, completion: nil)
-    }
+    }*/
     
 }

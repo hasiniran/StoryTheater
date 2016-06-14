@@ -20,6 +20,7 @@
 		41E7B31D1D008D40009CE7B8 /* SavedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E7B31C1D008D40009CE7B8 /* SavedScene.swift */; };
 		41E7B31F1D008D7F009CE7B8 /* FreeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */; };
 		41E7B3211D008D98009CE7B8 /* FreeScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 41E7B3201D008D98009CE7B8 /* FreeScene.sks */; };
+		821301091D10439000E31288 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 821301081D10439000E31288 /* Recorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,7 @@
 		41E7B31C1D008D40009CE7B8 /* SavedScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedScene.swift; sourceTree = "<group>"; };
 		41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FreeScene.swift; sourceTree = "<group>"; };
 		41E7B3201D008D98009CE7B8 /* FreeScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = FreeScene.sks; sourceTree = "<group>"; };
+		821301081D10439000E31288 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		82E5CA6E1D09C54100ECB09F /* ScreenCapture.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ScreenCapture.xcodeproj; path = "../ScreenRecSample/swift-screencapture/ScreenCapture.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,6 +120,7 @@
 				41E7B31A1D008D28009CE7B8 /* SavedScene.sks */,
 				41E7B31E1D008D7F009CE7B8 /* FreeScene.swift */,
 				41E7B3201D008D98009CE7B8 /* FreeScene.sks */,
+				821301081D10439000E31288 /* Recorder.swift */,
 				41714E461CF4F2510045BE7D /* GameViewController.swift */,
 				41714E401CF4F2510045BE7D /* AppDelegate.swift */,
 				41714E481CF4F2510045BE7D /* Main.storyboard */,
@@ -264,6 +267,7 @@
 				41E7B31F1D008D7F009CE7B8 /* FreeScene.swift in Sources */,
 				41714E471CF4F2510045BE7D /* GameViewController.swift in Sources */,
 				41E7B3191CFF6C0D009CE7B8 /* StoryScene.swift in Sources */,
+				821301091D10439000E31288 /* Recorder.swift in Sources */,
 				41714E411CF4F2510045BE7D /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -381,6 +385,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Autism App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.notredame.Autism-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -394,6 +399,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Autism App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.notredame.Autism-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
