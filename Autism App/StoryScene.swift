@@ -20,8 +20,11 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
     let scaleRec = UIPinchGestureRecognizer()
     let dragRec = UIPanGestureRecognizer()
     
+    let increaseSize = SKAction.scaleXBy(1, y: CGFloat(1.5), duration: 0.5)
+    
     var offset:CGFloat = 0
     var rotation:CGFloat = 0
+    var doesMove:Int = 0
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -31,42 +34,49 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
         self.view!.multipleTouchEnabled = true
         self.view!.userInteractionEnabled = true
         
-        tapRec.addTarget(self, action: #selector(tapAction))
-        tapRec.numberOfTapsRequired = 1
-        tapRec.numberOfTouchesRequired = 1
-        self.view!.addGestureRecognizer(tapRec)
+        /*tapRec.addTarget(self, action: #selector(tapAction))
+         tapRec.numberOfTapsRequired = 1
+         tapRec.numberOfTouchesRequired = 1
+         self.view!.addGestureRecognizer(tapRec)*/
         
         rotateRec.addTarget(self, action: #selector(rotateAction))
         self.view!.addGestureRecognizer(rotateRec)
         
-        dragRec.addTarget(self, action: #selector(dragAction))
+        scaleRec.addTarget(self, action: #selector(scaleAction))
         
-    }
-    
-    func tapAction(sender:UITapGestureRecognizer) {
-        print("was tapped")
+        //dragRec.addTarget(self, action: #selector(dragAction))
+        
     }
     
     func rotateAction(sender:UIRotationGestureRecognizer) {
         if (sender.state == .Changed) {
             rotation = CGFloat(sender.rotation) + self.offset
             rotation = rotation * -1
-            menu.zRotation = rotation
+            if (doesMove == 1) {
+                menu.zRotation = rotation
+            }
         }
         if (sender.state == .Ended) {
             self.offset = rotation * -1
+            doesMove = 0
         }
     }
     
-    func dragAction(recognizer: UIPanGestureRecognizer) {
-        let translation = recognizer.translationInView(self.view)
-        
-        recognizer.view!.center = CGPoint(x: recognizer.view!.center.x + translation.x, y: recognizer.view!.center.y + translation.y)
-        
-        recognizer.setTranslation(CGPointZero, inView: self.view)
+    func scaleAction(sender:UIPinchGestureRecognizer) {
+        if (sender.state == .Changed) {
+            menu.runAction(increaseSize)
+        }
     }
-
-  override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    
+    /*func dragAction(recognizer: UIPanGestureRecognizer) {
+     let translation = recognizer.translationInView(self.view)
+     
+     recognizer.view!.center = CGPoint(x: recognizer.view!.center.x + translation.x, y: recognizer.view!.center.y + translation.y)
+     
+     recognizer.setTranslation(CGPointZero, inView: self.view)
+     }*/
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
         
         for touch in touches {
@@ -88,6 +98,7 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
                     menu.zPosition = 1
                     self.addChild(menu)
                 } else if node.name == "menu" {
+                    doesMove = 1
                     menu.position = location
                 }
             }
@@ -107,7 +118,11 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
                 }
             }
         }
-
+        
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        doesMove = 0
     }
     
     func removeGestures() {
@@ -119,5 +134,5 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
-
+    
 }
