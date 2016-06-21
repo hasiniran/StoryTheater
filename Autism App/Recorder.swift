@@ -293,6 +293,16 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     }
     
     func merge() {
+        //Delete previous video, if it exists
+        let url=getFileURL("merge.mp4")
+        let fileManager=NSFileManager.defaultManager()
+        do{
+            try fileManager.removeItemAtURL(url)
+        } catch {
+            print("merge.mp4 does not exist")
+        }
+        
+        
         print("merging video and audio...")
         let composition=AVMutableComposition()
         let videoTrack=composition.addMutableTrackWithMediaType(AVMediaTypeVideo, preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
