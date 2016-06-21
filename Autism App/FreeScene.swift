@@ -13,21 +13,31 @@ import AVFoundation
 import ReplayKit
 //import ScreenCapture
 
-class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPreviewViewControllerDelegate/*, AVCaptureFileOutputRecordingDelegate*/ {
+class FreeScene: SKScene, UIGestureRecognizerDelegate {
 
     weak var viewController: UIViewController!
     var transition: SKTransition?
-    /*var recordingSession: AVAudioSession!
-    var recorder: AVAudioRecorder!
-    var player: AVAudioPlayer!
-    var videoRecorder: RPScreenRecorder!*/
     var filename: String?
-    //var videoSession: AVCaptureSession?
-    //var screen: AVCaptureScreenInput?
-    //var moviefile: AVCaptureMovieFileOutput?
     var images: [UIImage]?
-    
+    var recordFrame: CGRect!
+    var framesize: CGSize!
     var recorder: Recorder!
+    var recordAction: SKAction!
+    var bounds: CGRect!
+    
+    //Scene objects
+    let menu = SKSpriteNode(imageNamed: "AirplaneBlue")
+    
+    let tapRec = UITapGestureRecognizer()
+    let rotateRec = UIRotationGestureRecognizer()
+    let scaleRec = UIPinchGestureRecognizer()
+    let dragRec = UIPanGestureRecognizer()
+    
+    let increaseSize = SKAction.scaleXBy(1, y: CGFloat(1.5), duration: 0.5)
+    
+    var offset:CGFloat = 0
+    var rotation:CGFloat = 0
+    var doesMove:Int = 0
     
     
     override func didMoveToView(view: SKView) {
@@ -36,8 +46,61 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
         scene!.scaleMode = SKSceneScaleMode.ResizeFill
         viewController=self.view?.window?.rootViewController
         srand48(Int(NSDate().timeIntervalSinceReferenceDate))
-        images=[UIImage]()
-        recorder=Recorder()
+        //images=[UIImage]()
+        recorder=Recorder(gameScene: self)
+        
+        //Setup recording frame
+        let screenSize: CGRect=UIScreen.mainScreen().bounds
+        let frame=self.childNodeWithName("recordFrame") as! SKShapeNode
+        print(screenSize.width)
+        print(screenSize.height)
+        print(frame.frame)
+        print(frame.frame.size)
+        frame.xScale = screenSize.width/100*1.1
+        frame.yScale = screenSize.height/100*1.1
+        bounds=UIScreen.mainScreen().bounds
+        recordFrame=frame.frame
+        framesize=frame.frame.size
+        recordAction=SKAction.sequence([SKAction.runBlock(shootVideo),SKAction.waitForDuration(0.05)])
+        
+        //Setup gesture recognition
+        self.view!.multipleTouchEnabled = true
+        self.view!.userInteractionEnabled = true
+        
+        /*tapRec.addTarget(self, action: #selector(tapAction))
+         tapRec.numberOfTapsRequired = 1
+         tapRec.numberOfTouchesRequired = 1
+         self.view!.addGestureRecognizer(tapRec)*/
+        
+        rotateRec.addTarget(self, action: #selector(rotateAction))
+        self.view!.addGestureRecognizer(rotateRec)
+        
+        scaleRec.addTarget(self, action: #selector(scaleAction))
+        
+        //dragRec.addTarget(self, action: #selector(dragAction))
+
+
+        
+    }
+    
+    func rotateAction(sender:UIRotationGestureRecognizer) {
+        if (sender.state == .Changed) {
+            rotation = CGFloat(sender.rotation) + self.offset
+            rotation = rotation * -1
+            if (doesMove == 1) {
+                menu.zRotation = rotation
+            }
+        }
+        if (sender.state == .Ended) {
+            self.offset = rotation * -1
+            doesMove = 0
+        }
+    }
+    
+    func scaleAction(sender:UIPinchGestureRecognizer) {
+        if (sender.state == .Changed) {
+            menu.runAction(increaseSize)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -99,31 +162,72 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
                 } else if node.name == "videoRecButton" {
                     let label = node.childNodeWithName("videoRecText") as? SKLabelNode
                     if self.videoRecTapped() {
+                        runAction(SKAction.repeatActionForever(recordAction))
+                        recorder.startSoundRecording("recording.m4a")
                         label!.text="Recording..."
                     } else {
+                        recorder.stopSoundRecording(success: true)
                         label!.text="Rec Video"
                     }
                 } else if node.name == "videoPlayButton" {
-                    recorder.build(outputSize: CGSizeMake(1280, 720))
-                } else if node.name == "background" {
+                    //recorder.build(outputSize: CGSizeMake(1280, 720)) //Change to size of frame
+                    recorder.build(outputSize: CGSizeMake(1280, 720)) { ()->() in
+                        self.recorder.merge()
+                        //self.recorder.playVideo()
+                    }
+                    //recorder.playVideo()
+                /*} else if node.name == "background" {
                     if let bg = node as? SKSpriteNode {
                         bg.color=UIColor.init(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: CGFloat(drand48()))
-                    }
+                    }*/
+                } else if node.name == "optionsButton" {
+                    menu.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+                    menu.name = "menu"
+                    menu.zPosition = 1
+                    self.addChild(menu)
+                } else if node.name == "menu" {
+                    doesMove = 1
+                    menu.position = location
                 }
-                if let button = node as? SKShapeNode {
-                    if button.fillColor == UIColor.whiteColor(){
-                        print("change color")
-                        button.fillColor=UIColor.grayColor()
-                    } else if button.fillColor == UIColor.grayColor() {
-                        button.fillColor=UIColor.whiteColor()
-                    }
-                }
+
             }
         }
     }
     
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for touch in touches {
+            let location = touch.locationInNode(self)
+            
+            let nodes = self.nodesAtPoint(location) as [SKNode]
+            
+            for node in nodes {
+                if node.name == "menu" {
+                    menu.position = location
+                    menu.zPosition = 1
+                }
+            }
+        }
+        
+    }
+    
+    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        doesMove = 0
+    }
+    
+    func removeGestures() {
+        rotateRec.removeTarget(self, action: #selector(rotateAction))
+        self.view!.gestureRecognizers?.removeAll()
+    }
+    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+    }
+    
+    override func didFinishUpdate() {
+        /*if recorder.isVideoRecording(){
+            recorder.startVideo(self, frame: recordFrame)
+            print("recording...")
+        }*/
     }
     
     func recordTapped() -> Bool{
@@ -150,12 +254,24 @@ class FreeScene: SKScene, AVAudioRecorderDelegate, AVAudioPlayerDelegate, RPPrev
          return false
          }*/
         if !recorder.isVideoRecording(){
-            recorder.startVideo(self)
+            recorder.startVideo(self,frame: recordFrame, bounds: bounds)
             return true
         } else {
             recorder.stopVideo()
             return false
         }
+    }
+    
+    func shootVideo() {
+        if recorder.isVideoRecording(){
+            recorder.startVideo(self,frame: recordFrame, bounds: bounds)
+            print("recording...")
+        }/*
+        let node=self.childNodeWithName("background")
+        if let bg = node as? SKSpriteNode {
+            bg.color=UIColor.init(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: CGFloat(drand48()))
+        }*/
+
     }
     
     /*

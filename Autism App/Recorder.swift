@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import AVKit
 import SpriteKit
 
 class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
@@ -18,12 +19,15 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     var images: [UIImage]?
     var soundRecording: Bool
     var videoRecording: Bool
+    var scene: SKScene?
+    var videoURL: NSURL?
     
-    override init() {
+    init(gameScene: SKScene) {
         recordingSession = AVAudioSession.sharedInstance()
         images=[UIImage]()
         soundRecording=false
         videoRecording=false
+        scene=gameScene
     }
     
     func isSoundRecording() -> Bool {return soundRecording}
@@ -114,22 +118,35 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         }
     }
     
-    func getScreenshot(scene: SKScene) -> UIImage {
-        let snapshotView = scene.view!.snapshotViewAfterScreenUpdates(true)
-        let bounds = UIScreen.mainScreen().bounds
+    func getScreenshot(scene: SKScene, frame: CGRect, bounds: CGRect) -> UIImage {
+        //let snapshotView = scene.view!.snapshotViewAfterScreenUpdates(true)
+        //let snapshotView=scene.view!
+        //let bounds = UIScreen.mainScreen().bounds
+        //let xlength=bounds.width*0.8
+        //let ylength=bounds.height*0.5
         
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
+    
         //calculate rectangle bounds based on percentage of screen size (account for different devices)
-        snapshotView.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
+        //UIGraphicsBeginImageContextWithOptions(frame.size, false, 0)
+        //frame.minX,minY,maxX,maxY (CGFloat)
+        //let context=UIGraphicsGetCurrentContext()
+        //CGContextTranslateCTM(context, bounds.width-xlength+(bounds.width-xlength)/2, ylength)
+        //print(frame.size)
         
+        scene.view!.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
+        //snapshotView.drawViewHierarchyInRect(bounds, afterScreenUpdates: true)
+        //snapshotView.drawViewHierarchyInRect(CGRect(x: -80, y: -80, width: 900, height: 650), afterScreenUpdates: true)
+        //snapshotView.drawViewHierarchyInRect(frame, afterScreenUpdates: true)
         let screenshotImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
         
         UIGraphicsEndImageContext()
+        //var screenshotImage=UIImage()
+        return screenshotImage
         
-        return screenshotImage;
     }
     
-    func startVideo(scene: SKScene) {
+    func startVideo(scene: SKScene, frame: CGRect, bounds: CGRect) {
         /* ReplayKit recording
          if RPScreenRecorder.sharedRecorder().available{
          videoRecorder = RPScreenRecorder.sharedRecorder()
@@ -147,9 +164,10 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         //NSLog("start video")
         
         // Needs to continuously take screenshots until stopVideo()
-        let image: UIImage=getScreenshot(scene)
+        let image: UIImage=getScreenshot(scene, frame: frame, bounds: bounds)
         images!.append(image)
         print(images!.count)
+        
         videoRecording=true
         
         //let imgSprite=self.childNodeWithName("balloon") as? SKSpriteNode
@@ -167,7 +185,7 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         videoRecording=false
     }
 
-    func build(outputSize outputSize: CGSize) {
+    func build(outputSize outputSize: CGSize, completionHandler: ()->()){
         /*let fileManager = NSFileManager.defaultManager()
          let urls = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
          guard let documentDirectory: NSURL = urls.first else {
@@ -177,6 +195,7 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
          let videoOutputURL = documentDirectory.URLByAppendingPathComponent("OutputVideo.mp4")
          */
         let videoOutputURL=getFileURL("video.mp4")
+        videoURL=videoOutputURL
         
         if NSFileManager.defaultManager().fileExistsAtPath(videoOutputURL.path!) {
             do {
@@ -211,7 +230,8 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
             let media_queue = dispatch_queue_create("mediaInputQueue", nil)
             
             videoWriterInput.requestMediaDataWhenReadyOnQueue(media_queue, usingBlock: { () -> Void in
-                let fps: Int32 = 10
+                //Video specifications
+                let fps: Int32 = 20
                 let frameDuration = CMTimeMake(1, fps)
                 
                 var frameCount: Int64 = 0
@@ -265,10 +285,59 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
                 videoWriterInput.markAsFinished()
                 videoWriter.finishWritingWithCompletionHandler { () -> Void in
                     print("FINISHED!!!!!")
+                    completionHandler()
                 }
             })
         } //Needs to combine audio with video - AVComposition
         
+    }
+    
+    func merge() {
+        print("merging video and audio...")
+        let composition=AVMutableComposition()
+        let videoTrack=composition.addMutableTrackWithMediaType(AVMediaTypeVideo, preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
+        let audioTrack=composition.addMutableTrackWithMediaType(AVMediaTypeAudio, preferredTrackID: 0)
+        let videoAsset=AVURLAsset(URL: getFileURL("video.mp4"))
+        let audioAsset=AVURLAsset(URL: getFileURL("recording.m4a"))
+        
+        let video=videoAsset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
+        let audio=audioAsset.tracksWithMediaType(AVMediaTypeAudio)[0] as AVAssetTrack
+        
+        do{
+            try videoTrack.insertTimeRange(CMTimeRangeMake(kCMTimeZero, videoAsset.duration), ofTrack: video, atTime: kCMTimeZero)
+        } catch {
+            print("Could not load video track")
+        }
+        do{
+            try audioTrack.insertTimeRange(CMTimeRangeMake(kCMTimeZero, audioAsset.duration), ofTrack: audio, atTime: kCMTimeZero)
+        } catch {
+            print("Could not load audio track")
+        }
+        
+        guard let exporter=AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetMediumQuality) else {return}
+        exporter.outputURL=getFileURL("merge.mp4")
+        exporter.outputFileType=AVFileTypeMPEG4
+        exporter.shouldOptimizeForNetworkUse=true
+        
+        exporter.exportAsynchronouslyWithCompletionHandler() {
+            dispatch_async(dispatch_get_main_queue()) { _ in
+                self.playVideo()
+            }
+        }
+        
+        
+    }
+    
+    func playVideo() {
+        videoURL=getFileURL("merge.mp4")
+        //videoURL=NSURL(fileURLWithPath: getDocumentsDirectory().stringByAppendingPathComponent("video.mp4"))
+        print("saved video URL: \(videoURL!)")
+        let player = AVPlayer(URL: videoURL!)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = player
+        scene!.view?.window?.rootViewController!.presentViewController(playerViewController, animated: true) {
+            playerViewController.player!.play()
+        }
     }
     
 }
