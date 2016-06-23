@@ -21,6 +21,7 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
     var videoRecording: Bool
     var scene: SKScene?
     var videoURL: NSURL?
+    weak var viewController: UIViewController!
     
     init(gameScene: SKScene) {
         recordingSession = AVAudioSession.sharedInstance()
@@ -28,6 +29,7 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         soundRecording=false
         videoRecording=false
         scene=gameScene
+        viewController=scene!.view?.window?.rootViewController!
     }
     
     func isSoundRecording() -> Bool {return soundRecording}
@@ -310,8 +312,20 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         let videoAsset=AVURLAsset(URL: getFileURL("video.mp4"))
         let audioAsset=AVURLAsset(URL: getFileURL("recording.m4a"))
         
-        let video=videoAsset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
-        let audio=audioAsset.tracksWithMediaType(AVMediaTypeAudio)[0] as AVAssetTrack
+        var video: AVAssetTrack
+        var audio: AVAssetTrack
+        if(videoAsset.tracksWithMediaType(AVMediaTypeVideo).count>0){
+            video=videoAsset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
+        } else {
+            print("No video recorded")
+            return
+        }
+        if(audioAsset.tracksWithMediaType(AVMediaTypeAudio).count>0){
+            audio=audioAsset.tracksWithMediaType(AVMediaTypeAudio)[0] as AVAssetTrack
+        } else {
+            print("No audio recorded")
+            return
+        }
         
         do{
             try videoTrack.insertTimeRange(CMTimeRangeMake(kCMTimeZero, videoAsset.duration), ofTrack: video, atTime: kCMTimeZero)
@@ -338,6 +352,15 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         
     }
     
+    /*Next:
+     Make interface more organized
+     Build video automatically/wait message
+     Crop screenshots
+     Allow saving multiple videos
+     Crashes after 690 frames
+     Poor video quality
+     */
+    
     func playVideo() {
         videoURL=getFileURL("merge.mp4")
         //videoURL=NSURL(fileURLWithPath: getDocumentsDirectory().stringByAppendingPathComponent("video.mp4"))
@@ -345,9 +368,49 @@ class Recorder: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
         let player = AVPlayer(URL: videoURL!)
         let playerViewController = AVPlayerViewController()
         playerViewController.player = player
-        scene!.view?.window?.rootViewController!.presentViewController(playerViewController, animated: true) {
+        print(viewController.presentedViewController)
+        viewController.presentViewController(playerViewController, animated: true) {
             playerViewController.player!.play()
+            //print(self.viewController.presentedViewController!)
+            /*while(self.viewController.presentedViewController!==playerViewController){
+                print("playerViewController active")
+            }
+            print("playerViewcontroller not active")
+            */
+            //self.saveVideo(playerViewController)
         }
+        let nextScene=GameScene(fileNamed: "GameScene")
+        nextScene?.scaleMode = .AspectFill
+        scene!.view?.presentScene(nextScene)
+        //scene!.scaleMode = .AspectFill
+        
+        //viewController.dismissViewControllerAnimated(true, completion: self.saveVideo)
+        /*scene!.view?.window?.rootViewController!.presentViewController(playerViewController, animated: true) {
+            playerViewController.player!.play()
+            //self.saveVideo(playerViewController)
+        }*/
+        
+        //self.saveVideo()
+        
+        //viewController.showViewController(playerViewController, sender: self)
+        //viewController.addChildViewController(playerViewController)
+
+        //self.saveVideo()
+        //scene!.view?.window?.rootViewController!.dismissViewControllerAnimated(true, completion: nil)
+        //scene!.view?.window?.rootViewController!.presentViewController(playerViewController, animated: true, completion: self.saveVideo)
+        //dispatch_async(dispatch_get_main_queue(), {
+            //self.saveVideo()
+        //})
+        //self.saveVideo()
+    }
+    
+    func saveVideo() {
+        print("display prompt")
+        let promptController=UIAlertController(title: "Controlla", message: "Save video?", preferredStyle: UIAlertControllerStyle.Alert)
+        promptController.addAction(UIAlertAction(title: "Save", style: UIAlertActionStyle.Default, handler: nil))
+        promptController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: nil))
+        viewController.presentViewController(promptController, animated: true, completion: nil)
+        
     }
     
 }

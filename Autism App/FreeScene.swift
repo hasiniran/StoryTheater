@@ -24,6 +24,7 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
     var recorder: Recorder!
     var recordAction: SKAction!
     var bounds: CGRect!
+    var screenSize: CGRect!
     
     //Scene objects
     let menu = SKSpriteNode(imageNamed: "AirplaneBlue")
@@ -50,7 +51,7 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
         recorder=Recorder(gameScene: self)
         
         //Setup recording frame
-        let screenSize: CGRect=UIScreen.mainScreen().bounds
+        screenSize=UIScreen.mainScreen().bounds
         let frame=self.childNodeWithName("recordFrame") as! SKShapeNode
         print(screenSize.width)
         print(screenSize.height)
@@ -119,36 +120,7 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
                     nextScene!.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene!, transition: transition!)
-                } else if node.name == "recordButton" {
-                    //start recording (experiment)
-                    //print("recordButton pressed")
-                    //navigationITem.backBarButtonItem = UIBarButtonItem(title:"Record",style: .Plain, target:nil,action:nil)
-                    
-                    /*
-                    recordingSession = AVAudioSession.sharedInstance()
-                    
-                    do {
-                        try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
-                        try recordingSession.setActive(true)
-                        recordingSession.requestRecordPermission() { [unowned self] (allowed: Bool) -> Void in dispatch_async(dispatch_get_main_queue()){
-                            if allowed {
-                                let label = node.childNodeWithName("recordText") as? SKLabelNode
-                                if self.recordTapped(){
-                                    label!.text="Stop Recording"
-                                } else {
-                                    label!.text="Record!"
-                                }
-                                //print("starting recording...")
-                            } else {
-                                //failed to record
-                                print("failed to record")
-                            }
-                            }
-                        }
-                    } catch {
-                                //failed to record
-                        print("failed to record")
-                    }*/
+                /*} else if node.name == "recordButton" {
                     
                     let label=node.childNodeWithName("recordText") as? SKLabelNode
                     if self.recordTapped(){
@@ -158,28 +130,25 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
                     }
 
                 } else if node.name == "playbackButton" {
-                    recorder.playRecording()
+                    recorder.playRecording() */
                 } else if node.name == "videoRecButton" {
                     let label = node.childNodeWithName("videoRecText") as? SKLabelNode
                     if self.videoRecTapped() {
                         runAction(SKAction.repeatActionForever(recordAction))
+                        runAction(SKAction.repeatActionForever(recordAction), withKey: "shootVideo")
                         recorder.startSoundRecording("recording.m4a")
                         label!.text="Recording..."
                     } else {
+                        removeActionForKey("shootVideo")
                         recorder.stopSoundRecording(success: true)
                         label!.text="Rec Video"
                     }
                 } else if node.name == "videoPlayButton" {
                     //recorder.build(outputSize: CGSizeMake(1280, 720)) //Change to size of frame
-                    recorder.build(outputSize: CGSizeMake(1280, 720)) { ()->() in
+                    recorder.build(outputSize: CGSizeMake(screenSize.width, screenSize.height)) { ()->() in
                         self.recorder.merge()
                         //self.recorder.playVideo()
                     }
-                    //recorder.playVideo()
-                /*} else if node.name == "background" {
-                    if let bg = node as? SKSpriteNode {
-                        bg.color=UIColor.init(red: CGFloat(drand48()), green: CGFloat(drand48()), blue: CGFloat(drand48()), alpha: CGFloat(drand48()))
-                    }*/
                 } else if node.name == "optionsButton" {
                     menu.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
                     menu.name = "menu"
