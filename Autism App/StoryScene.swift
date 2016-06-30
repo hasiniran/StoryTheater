@@ -21,9 +21,9 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
     let player4 = SKSpriteNode(imageNamed: "BlueBird")
     let player5 = SKSpriteNode(imageNamed: "Shark")
     let player6 = SKSpriteNode(imageNamed: "Dolphin")
-    let player = SKSpriteNode()
-    let playerTwo = SKSpriteNode()
-    let playerThree = SKSpriteNode()
+    let player = SKSpriteNode(imageNamed: "BlueBird")
+    let playerTwo = SKSpriteNode(imageNamed: "BlueBird")
+    let playerThree = SKSpriteNode(imageNamed: "BlueBird")
     
     let objectMenu = SKSpriteNode(imageNamed: "objectScreen")
     let objectX = SKSpriteNode(imageNamed: "Xicon")
@@ -33,9 +33,9 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
     let object4 = SKSpriteNode(imageNamed: "UFO")
     let object5 = SKSpriteNode(imageNamed: "BarnMedium")
     let object6 = SKSpriteNode(imageNamed: "Train")
-    let object = SKSpriteNode()
-    let objectTwo = SKSpriteNode()
-    let objectThree = SKSpriteNode()
+    let object = SKSpriteNode(imageNamed: "PurpleBoat")
+    let objectTwo = SKSpriteNode(imageNamed: "PurpleBoat")
+    let objectThree = SKSpriteNode(imageNamed: "PurpleBoat")
     
     let tapRec = UITapGestureRecognizer()
     let rotateRec = UIRotationGestureRecognizer()
@@ -125,35 +125,35 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
                 } else if (node.name == "optionsButton" && hasPressedOptions == 0) {
                     menu.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
                     menu.name = "menu"
-                    menu.zPosition = 1
+                    menu.zPosition = 8
                     self.addChild(menu)
                     player1.position = CGPointMake(215, 500)
                     player1.name = "player1"
-                    player1.zPosition = 2
+                    player1.zPosition = 9
                     self.addChild(player1)
                     player2.position = CGPointMake(490, 500)
                     player2.name = "player2"
-                    player2.zPosition = 2
+                    player2.zPosition = 9
                     self.addChild(player2)
                     player3.position = CGPointMake(765, 500)
                     player3.name = "player3"
-                    player3.zPosition = 2
+                    player3.zPosition = 9
                     self.addChild(player3)
                     player4.position = CGPointMake(215, 325)
                     player4.name = "player4"
-                    player4.zPosition = 2
+                    player4.zPosition = 9
                     self.addChild(player4)
                     player5.position = CGPointMake(490, 325)
                     player5.name = "player5"
-                    player5.zPosition = 2
+                    player5.zPosition = 9
                     self.addChild(player5)
                     player6.position = CGPointMake(765, 325)
                     player6.name = "player6"
-                    player6.zPosition = 2
+                    player6.zPosition = 9
                     self.addChild(player6)
                     xIcon.position = CGPointMake(825, 575)
                     xIcon.name = "xIcon"
-                    xIcon.zPosition = 2
+                    xIcon.zPosition = 9
                     self.addChild(xIcon)
                     hasPressedOptions = 1
                 } else if node.name == "player1" {
@@ -200,35 +200,35 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
                 } else if (node.name == "itemButton" && hasPressedItems == 0) {
                     objectMenu.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
                     objectMenu.name = "menu"
-                    objectMenu.zPosition = 1
+                    objectMenu.zPosition = 8
                     self.addChild(objectMenu)
                     object1.position = CGPointMake(215, 500)
                     object1.name = "object1"
-                    object1.zPosition = 2
+                    object1.zPosition = 9
                     self.addChild(object1)
                     object2.position = CGPointMake(490, 500)
                     object2.name = "object2"
-                    object2.zPosition = 2
+                    object2.zPosition = 9
                     self.addChild(object2)
                     object3.position = CGPointMake(765, 500)
                     object3.name = "object3"
-                    object3.zPosition = 2
+                    object3.zPosition = 9
                     self.addChild(object3)
                     object4.position = CGPointMake(215, 325)
                     object4.name = "object4"
-                    object4.zPosition = 2
+                    object4.zPosition = 9
                     self.addChild(object4)
                     object5.position = CGPointMake(490, 325)
                     object5.name = "object5"
-                    object5.zPosition = 2
+                    object5.zPosition = 9
                     self.addChild(object5)
                     object6.position = CGPointMake(765, 325)
                     object6.name = "object6"
-                    object6.zPosition = 2
+                    object6.zPosition = 9
                     self.addChild(object6)
                     objectX.position = CGPointMake(825, 575)
                     objectX.name = "objectX"
-                    objectX.zPosition = 2
+                    objectX.zPosition = 9
                     self.addChild(objectX)
                     hasPressedItems = 1
                 } else if node.name == "object1" {
@@ -281,19 +281,19 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
         if numCharacters == 0 {
             player.position = CGPointMake(CGRectGetMidX(self.frame) - 100, CGRectGetMidY(self.frame) - 100)
             player.name = "player"
-            player.zPosition = 0.2
+            player.zPosition = 2
             self.addChild(player)
             numCharacters = 1
         } else if numCharacters == 1 {
             playerTwo.position = CGPointMake(CGRectGetMidX(self.frame) - 50, CGRectGetMidY(self.frame) + 50)
             playerTwo.name = "playerTwo"
-            playerTwo.zPosition = 0.3
+            playerTwo.zPosition = 3
             self.addChild(playerTwo)
             numCharacters = 2
         } else if numCharacters == 2 {
             playerThree.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
             playerThree.name = "playerThree"
-            playerThree.zPosition = 0.4
+            playerThree.zPosition = 4
             self.addChild(playerThree)
             numCharacters = 3
         }
@@ -303,19 +303,19 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
         if numObjects == 0 {
             object.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
             object.name = "object"
-            object.zPosition = 0.5
+            object.zPosition = 5
             self.addChild(object)
             numObjects = 1
         } else if numObjects == 1 {
             objectTwo.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
             objectTwo.name = "objectTwo"
-            objectTwo.zPosition = 0.6
+            objectTwo.zPosition = 6
             self.addChild(objectTwo)
             numObjects = 2
         } else if numObjects == 2 {
             objectThree.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
             objectTwo.name = "objectThree"
-            objectThree.zPosition = 0.7
+            objectThree.zPosition = 7
             self.addChild(objectThree)
             numObjects = 3
         }
@@ -331,27 +331,27 @@ class StoryScene: SKScene, UIGestureRecognizerDelegate {
                 if (node.name == "player" && doesMove == 1) {
                     doesMove = 1
                     player.position = location
-                    player.zPosition = 0.2
+                    player.zPosition = 2
                 } else if (node.name == "playerTwo" && doesMove == 2) {
                     doesMove = 2
                     playerTwo.position = location
-                    playerTwo.zPosition = 0.3
+                    playerTwo.zPosition = 3
                 } else if (node.name == "playerThree" && doesMove == 3) {
                     doesMove = 3
                     playerThree.position = location
-                    playerThree.zPosition = 0.4
+                    playerThree.zPosition = 4
                 } else if (node.name == "object" && doesMove == 4) {
                     doesMove = 4
                     object.position = location
-                    object.zPosition = 0.5
+                    object.zPosition = 5
                 } else if (node.name == "objectTwo" && doesMove == 5) {
                     doesMove = 5
                     objectTwo.position = location
-                    objectTwo.zPosition = 0.6
+                    objectTwo.zPosition = 6
                 } else if (node.name == "objectThree" && doesMove == 6) {
                     doesMove = 6
                     objectThree.position = location
-                    objectThree.zPosition = 0.7
+                    objectThree.zPosition = 7
                 }
             }
         }
