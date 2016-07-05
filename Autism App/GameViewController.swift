@@ -47,6 +47,7 @@ class GameViewController: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        print("MEMORY WARNING")
         // Release any cached data, images, etc that aren't in use.
     }
 

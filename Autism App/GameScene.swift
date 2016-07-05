@@ -50,7 +50,7 @@ class GameScene: SKScene {
                 } else if node.name == "savedStories" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = SavedScene(fileNamed: "SavedScene")
+                    let nextScene = StartupScene(fileNamed: "StartupScene")
                     nextScene!.scaleMode = .AspectFill
                     
                     scene?.view?.presentScene(nextScene!, transition: transition!)

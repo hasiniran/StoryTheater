@@ -25,6 +25,8 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
     var recordAction: SKAction!
     var bounds: CGRect!
     var screenSize: CGRect!
+    var videoView: UIView!
+    var activeNodes: [SKNode]?
     
     //Scene objects
     let menu = SKSpriteNode(imageNamed: "AirplaneBlue")
@@ -53,16 +55,19 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
         //Setup recording frame
         screenSize=UIScreen.mainScreen().bounds
         let frame=self.childNodeWithName("recordFrame") as! SKShapeNode
-        print(screenSize.width)
-        print(screenSize.height)
+        print("width: \(screenSize.width)")
+        print("height: \(screenSize.height)")
         print(frame.frame)
         print(frame.frame.size)
-        frame.xScale = screenSize.width/100*1.1
-        frame.yScale = screenSize.height/100*1.1
+        //frame.xScale = screenSize.width/100*1.1
+        //frame.yScale = screenSize.height/100*1.1
         bounds=UIScreen.mainScreen().bounds
         recordFrame=frame.frame
         framesize=frame.frame.size
-        recordAction=SKAction.sequence([SKAction.runBlock(shootVideo),SKAction.waitForDuration(0.05)])
+        recordAction=SKAction.sequence([SKAction.runBlock(shootVideo),SKAction.waitForDuration(0.5)])
+        videoView=UIView(frame: bounds)
+        activeNodes=[SKNode]()
+        
         
         //Setup gesture recognition
         self.view!.multipleTouchEnabled = true
@@ -106,7 +111,6 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
-        
         for touch in touches {
             let location = touch.locationInNode(self)
             
@@ -127,25 +131,29 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
                         label!.text="Stop Recording"
                     } else {
                         label!.text="Record!"
-                    }
+                    }*/
 
-                } else if node.name == "playbackButton" {
-                    recorder.playRecording() */
+                } else if node.name == "playSoundButton" {
+                    recorder.playRecordingWithEffects()
                 } else if node.name == "videoRecButton" {
                     let label = node.childNodeWithName("videoRecText") as? SKLabelNode
                     if self.videoRecTapped() {
-                        runAction(SKAction.repeatActionForever(recordAction))
-                        runAction(SKAction.repeatActionForever(recordAction), withKey: "shootVideo")
+                        //UIGraphicsBeginImageContextWithOptions(self.view!.bounds.size, false, 0)
+                        //runAction(SKAction.repeatActionForever(recordAction))
+                        //runAction(SKAction.repeatActionForever(recordAction), withKey: "shootVideo")
+                        //Try running SKAction in Recorder object instead of scene
+                        
                         recorder.startSoundRecording("recording.m4a")
                         label!.text="Recording..."
                     } else {
                         removeActionForKey("shootVideo")
+                        //UIGraphicsEndImageContext()
                         recorder.stopSoundRecording(success: true)
                         label!.text="Rec Video"
                     }
                 } else if node.name == "videoPlayButton" {
                     //recorder.build(outputSize: CGSizeMake(1280, 720)) //Change to size of frame
-                    recorder.build(outputSize: CGSizeMake(screenSize.width, screenSize.height)) { ()->() in
+                    recorder.build(outputSize: CGSizeMake(1280, 720), imagegroup: recorder.images!) { ()->() in
                         self.recorder.merge()
                         //self.recorder.playVideo()
                     }
@@ -154,6 +162,7 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
                     menu.name = "menu"
                     menu.zPosition = 1
                     self.addChild(menu)
+                    activeNodes!.append(menu)
                 } else if node.name == "menu" {
                     doesMove = 1
                     menu.position = location
@@ -223,7 +232,7 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
          return false
          }*/
         if !recorder.isVideoRecording(){
-            recorder.startVideo(self,frame: recordFrame, bounds: bounds)
+            recorder.startVideo(self,frame: recordFrame, bounds: bounds, scrView: videoView, nodes: activeNodes!)
             return true
         } else {
             recorder.stopVideo()
@@ -233,7 +242,8 @@ class FreeScene: SKScene, UIGestureRecognizerDelegate {
     
     func shootVideo() {
         if recorder.isVideoRecording(){
-            recorder.startVideo(self,frame: recordFrame, bounds: bounds)
+            //recorder.startVideo(self,frame: recordFrame, bounds: bounds, scrView: self.view!, nodes: activeNodes!)
+            recorder.startVideo(self, frame: recordFrame, bounds: bounds, scrView: videoView, nodes: activeNodes!)
             print("recording...")
         }/*
         let node=self.childNodeWithName("background")
