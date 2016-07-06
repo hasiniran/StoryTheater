@@ -15,19 +15,11 @@ class StartupScene: SKScene {
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
+        scene!.scaleMode = SKSceneScaleMode.ResizeFill
         print("scene loaded")
-        
-        if character != nil {
-            //skip to next scene
-            let nextScene=SavedScene(fileNamed: "SavedScene")
-            nextScene!.scaleMode = .AspectFill
-            print("loading home")
-            scene?.view?.presentScene(nextScene!)
-        } else {
-            print("loading startup")
-            scene!.scaleMode = SKSceneScaleMode.ResizeFill
-        }
+
     }
+    
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         /* Called when a touch begins */
@@ -49,6 +41,11 @@ class StartupScene: SKScene {
                     let sprite=SKSpriteNode(imageNamed: "AirplaneCartoon") //substitute for any character
                     character=Player(sprite: sprite)
                     print("airplane selected")
+                    //Save character choice
+                    let defaults=NSUserDefaults.standardUserDefaults()
+                    //defaults.setObject(character, forKey: "player")
+                    defaults.setObject("airplane", forKey: "type")
+                    
                     transition = SKTransition.revealWithDirection(.Up, duration: 1.0)
                     let nextScene = HomeScene(fileNamed: "HomeScene")
                     nextScene!.loadPlayer(character!)
@@ -58,6 +55,10 @@ class StartupScene: SKScene {
                     let sprite=SKSpriteNode(imageNamed: "Train")
                     character=Player(sprite: sprite)
                     print("train selected")
+                    let defaults=NSUserDefaults.standardUserDefaults()
+                    //defaults.setObject(character, forKey: "player")
+                    defaults.setObject("train", forKey: "type")
+                    
                     transition = SKTransition.revealWithDirection(.Up, duration: 1.0)
                     let nextScene = HomeScene(fileNamed: "HomeScene")
                     nextScene!.loadPlayer(character!)

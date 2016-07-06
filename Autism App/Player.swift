@@ -31,4 +31,13 @@ class Player: NSObject, NSCoding {
         
     }
     
+    func save() {
+        //let defaults=NSUserDefaults.standardUserDefaults()
+        
+    }
+    
+    func load() {
+        
+    }
+    
 }

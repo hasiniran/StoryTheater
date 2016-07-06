@@ -14,6 +14,7 @@ class GameScene: SKScene {
     var storyPlay: SKSpriteNode?
     var savedStories: SKSpriteNode?
     var transition: SKTransition?
+    var playerType: String?
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -22,6 +23,17 @@ class GameScene: SKScene {
         storyPlay = childNodeWithName("storyPlay") as? SKSpriteNode
         savedStories = childNodeWithName("savedStories") as? SKSpriteNode
         //scene!.scaleMode = SKSceneScaleMode.ResizeFill
+        
+        //Check for saved data
+        let defaults=NSUserDefaults.standardUserDefaults()
+        //Uncomment next 2 lines to delete saved data
+        //let appDomain = NSBundle.mainBundle().bundleIdentifier!
+        //defaults.removePersistentDomainForName(appDomain)
+        if let type=defaults.objectForKey("type") as? String {
+            //Player data exists
+            playerType=type
+            print("player data found")
+        }
     }
     
    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -50,10 +62,29 @@ class GameScene: SKScene {
                 } else if node.name == "savedStories" {
                     transition = SKTransition.revealWithDirection(.Down, duration: 1.0)
                     
-                    let nextScene = StartupScene(fileNamed: "StartupScene")
-                    nextScene!.scaleMode = .AspectFill
+                    if playerType == nil{
+                        let nextScene = StartupScene(fileNamed: "StartupScene")
+                        //let nextScene = GameScene(fileNamed: "GameScene")
+                        nextScene!.scaleMode = .AspectFill
                     
-                    scene?.view?.presentScene(nextScene!, transition: transition!)
+                        scene?.view?.presentScene(nextScene!, transition: transition!)
+                    } else {
+                        var sprite: SKSpriteNode?
+                        if playerType=="airplane"{
+                            sprite=SKSpriteNode(imageNamed: "AirplaneCartoon")
+                        }else if playerType=="train"{
+                            sprite=SKSpriteNode(imageNamed: "Train")
+                        }else{
+                            sprite=SKSpriteNode(imageNamed: "UFO")
+                        }
+                        let character=Player(sprite: sprite!)
+                        
+                        let nextScene = HomeScene(fileNamed: "HomeScene")
+                        nextScene!.scaleMode = .AspectFill
+                        print("loading home screen")
+                        nextScene!.loadPlayer(character)
+                        scene?.view?.presentScene(nextScene!, transition: transition!)
+                    }
                 }
             }
         }

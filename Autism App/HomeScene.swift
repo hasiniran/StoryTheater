@@ -17,6 +17,7 @@ class HomeScene: SKScene {
         /* Setup your scene here */
         
         scene!.scaleMode = SKSceneScaleMode.ResizeFill
+        print("home scene presented")
         //self.player=playerToLoad
         //let player=SKSpriteNode(coder: <#T##NSCoder#>)
         //let playerNode=SKSpriteNode(imageNamed: player.sprite!)
@@ -51,6 +52,15 @@ class HomeScene: SKScene {
                     let nextScene = GameScene(fileNamed: "GameScene")
                     nextScene!.scaleMode = .AspectFill
                     
+                    scene?.view?.presentScene(nextScene!, transition: transition!)
+                } else if node.name == "deleteButton" {
+                    //Reset player data
+                    let appDomain = NSBundle.mainBundle().bundleIdentifier!
+                    NSUserDefaults.standardUserDefaults().removePersistentDomainForName(appDomain)
+                    
+                    transition = SKTransition.revealWithDirection(.Left, duration: 1.0)
+                    let nextScene = GameScene(fileNamed: "GameScene")
+                    nextScene!.scaleMode = .AspectFill
                     scene?.view?.presentScene(nextScene!, transition: transition!)
                 }
             }
