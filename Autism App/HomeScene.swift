@@ -31,7 +31,9 @@ class HomeScene: SKScene {
         player=playerToLoad
         //let playerNode=SKSpriteNode(imageNamed: player.sprite!)
         //let playerNode=player?.sprite!
-        player!.sprite!.position=CGPointMake(500, 500)
+        //player!.sprite!.position=CGPointMake(500, 500)
+        player!.sprite!.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+        player!.sprite!.name="player"
         self.addChild(player!.sprite!)
         //player!.sprite!.position=CGPointMake((scene?.view?.bounds.width)!/2, (scene?.view?.bounds.height)!/2)
 
@@ -58,10 +60,12 @@ class HomeScene: SKScene {
                     let appDomain = NSBundle.mainBundle().bundleIdentifier!
                     NSUserDefaults.standardUserDefaults().removePersistentDomainForName(appDomain)
                     
-                    transition = SKTransition.revealWithDirection(.Left, duration: 1.0)
+                    transition = SKTransition.doorsCloseHorizontalWithDuration(1.0)
                     let nextScene = GameScene(fileNamed: "GameScene")
                     nextScene!.scaleMode = .AspectFill
                     scene?.view?.presentScene(nextScene!, transition: transition!)
+                } else if node.name == "player" {
+                    print("player pressed")
                 }
             }
         }

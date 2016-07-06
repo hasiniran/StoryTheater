@@ -64,7 +64,6 @@ class GameScene: SKScene {
                     
                     if playerType == nil{
                         let nextScene = StartupScene(fileNamed: "StartupScene")
-                        //let nextScene = GameScene(fileNamed: "GameScene")
                         nextScene!.scaleMode = .AspectFill
                     
                         scene?.view?.presentScene(nextScene!, transition: transition!)
